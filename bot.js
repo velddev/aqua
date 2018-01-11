@@ -141,13 +141,13 @@ client.on('ready', () => {
 client.on('message', msg => {
     if(msg.content.startsWith(config.prefix))
     {
-        let command = msg.content.substring(prefix.length).split(' ')[0];
+        let command = msg.content.substring(config.prefix.length).split(' ')[0];
          
         try
         {
             if (command in commandPool)
             {
-                commandPool[command].process(msg, trimStart(' ', msg.content.substring(command.length + prefix.length)))
+                commandPool[command].process(msg, trimStart(' ', msg.content.substring(command.length + config.prefix.length)))
             }
         }
         catch(e)
