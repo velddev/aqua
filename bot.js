@@ -157,6 +157,4 @@ client.on('message', msg => {
     }
 });
 
-console.log(config.token);
-
 client.login(config.token);
