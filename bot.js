@@ -9,7 +9,7 @@ let config = {
 
 if(fs.existsSync("./config.json"))
 {
-    config = fs.readFileSync("./config.json");
+    config = JSON.parse(fs.readFileSync("./config.json"));
 }
 else
 {
@@ -156,5 +156,7 @@ client.on('message', msg => {
         }
     }
 });
+
+console.log(config.token);
 
 client.login(config.token);
