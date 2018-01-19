@@ -1,0 +1,22 @@
+{
+  "name": "aqua",
+  "version": "1.0.0",
+  "description": "small role distributing discord bot.",
+  "main": "bot.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/velddev/aqua.git"
+  },
+  "author": "velddev",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/velddev/aqua/issues"
+  },
+  "homepage": "https://github.com/velddev/aqua#readme",
+  "dependencies": {
+    "discord.js": "^11.3.0"
+  }
+}
