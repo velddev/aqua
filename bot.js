@@ -1,23 +1,24 @@
 const Discord = require("discord.js");
 const fs = require("fs");
 
+// var setup
+
 const client = new Discord.Client();
 let config = {
     prefix : ">",
     token : "",
 }
 
-if(fs.existsSync("./config.json"))
-{
+// load config
+
+if(fs.existsSync("./config.json")) {
     config = JSON.parse(fs.readFileSync("./config.json"));
-}
-else
-{
+} else {
     console.log("config file created!");    
     fs.writeFileSync("./config.json", JSON.stringify(config, null, '\t'));
 }
 
-var commandPool = {};
+// helper functions
 
 function trimStart(character, string) {
     var startIndex = 0;
@@ -29,8 +30,7 @@ function trimStart(character, string) {
     return string.substr(startIndex);
 }
 
-function getErrorEmbed(message)
-{
+function getErrorEmbed(message) {
     return {
         "embed":{
             "title":"🚫 Uh oh.",
@@ -40,8 +40,7 @@ function getErrorEmbed(message)
     }
 }
 
-function getOKEmbed(message)
-{
+function getOKEmbed(message) {
     return {
         "embed":{
             "title":"🆗 Got ya.",
@@ -49,6 +48,54 @@ function getOKEmbed(message)
             "color":6857471
         }
     }
+}
+
+// setup commands
+
+var commandPool = {};
+
+commandPool["ping"] = {
+    process : (msg, arguments) => {
+        let newMessage = msg.channel.send("wait one moment!");
+        newMessage.edit("pong! " + (newMessage.createdAt - msg.createdAt) + "ms");
+    },
+    usage : "",
+}
+
+commandPool["info"] = {
+    process : (msg, args) => {
+
+        let commandList = "";
+
+        for (var key in commandPool) {
+            // skip loop if the property is from prototype
+            if (!commandPool.hasOwnProperty(key)) 
+                continue;
+        
+            commandList += config.prefix + key + " " + commandPool[key].usage + "\n";
+        }
+
+        msg.channel.send({
+            "embed" : {
+                "title" : "🔵 Hello, I am " + msg.guild.me.nickname,
+                "description" : "I bring you your long awaited roles.",
+                "color" : 6857471,
+                "fields": [
+                    {
+                        "name" : "Commands",
+                        "value" : commandList,
+                        "inline" : false
+                    },
+                    {
+                        "name" : "Source Code",
+                        "value" : "https://github.com/velddev/aqua",
+                        "inline" : false
+                    }
+                ]
+            }
+        })
+    },
+    usage : "",
 }
 
 commandPool["iam"] = {
@@ -62,13 +109,14 @@ commandPool["iam"] = {
 
         if(msg.member.roles.has(role.id)) {
              msg.member.removeRole(role).catch(console.error);            
-             msg.channel.send(getOKEmbed("removed `" + role.name + "` from " + msg.author.name));                         
+             msg.channel.send(getOKEmbed("removed `" + role.name + "` from " + msg.author.username));                         
         } 
         else {
             msg.member.addRole(role).catch(console.error);  
-            msg.channel.send(getOKEmbed("added `" + role.name + "` to " + msg.author.name));                         
+            msg.channel.send(getOKEmbed("added `" + role.name + "` to " + msg.author.username));                         
         }
-    }
+    },
+    usage : "<role name>",
 };
 
 commandPool["game"] = {
@@ -94,7 +142,8 @@ commandPool["game"] = {
 
         msg.member.setNickname(newName + "[" + arguments + "]");
         msg.channel.send(getOKEmbed("set your game to `" + arguments + "`"));
-    }
+    },
+    usage : "<game name>"
 };
 
 commandPool["search"] = {
@@ -129,14 +178,15 @@ commandPool["search"] = {
         }
 
         msg.channel.send(getOKEmbed(output));
-    }
+    },
+    usage : "<query>"
 }
+
+// events
 
 client.on('ready', () => {
   console.log(`Logged in as ${client.user.tag}!`);
 });
-
-
 
 client.on('message', msg => {
     if(msg.content.startsWith(config.prefix))
